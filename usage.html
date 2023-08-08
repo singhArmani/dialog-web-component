@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <link rel="stylesheet" href="./style.css" type="text/css" />
+    <script src="./dialog.js"></script>
+  </head>
+  <body>
+    <h2>Creating a Modal using Web Component</h2>
+    <button id="modal-trigger">Open modal</button>
+    <pf-modal title="PF modal title">
+      <p>This is modal content</p>
+    </pf-modal>
+  </body>
+  <script>
+    document.getElementById('modal-trigger').addEventListener('click', (e) => {
+      document.querySelector('pf-modal').visible = true;
+    });
+  </script>
+</html>

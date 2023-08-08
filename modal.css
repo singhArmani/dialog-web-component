@@ -1,0 +1,72 @@
+.overlay {
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.33);
+  inset: 0;
+  width: 100%;
+  z-index: 1;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1.1);
+  transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+}
+
+.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  transition: visibility 0s linear 0s, opacity 0.25s 0s, transform 0.25s;
+}
+
+.content-wrapper {
+  background-color: var(--bg-color, #fff);
+  border-radius: 1rem;
+  position: relative;
+  width: min(90%, 50ch);
+  padding: 1.5rem;
+  margin: 10vh auto;
+}
+
+/* modal head wrapper */
+.modal-head {
+  display: flex;
+  padding-block-end: 12px;
+  align-items: center;
+  border-bottom: 1px solid gray;
+  justify-content: space-between;
+}
+
+/* modal title */
+h2 {
+  line-height: 32px;
+  font-size: 28px;
+  color: inherit;
+  font-weight: 400;
+  margin: 0;
+}
+
+/* close button */
+.close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  outline: revert;
+  border: none;
+  appearance: none;
+  background: transparent;
+  height: 2rem;
+  width: 2rem;
+  transition: background-color 200ms;
+  outline: transparent solid 2px;
+  outline-offset: 2px;
+}
+
+.close-btn:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.close-btn:focus,
+.close-btn:active {
+  outline-color: currentColor;
+}
