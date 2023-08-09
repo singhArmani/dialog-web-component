@@ -1,1 +1,20 @@
 /** External stylesheet */
+
+body {
+  font-family: 'Courier New', Courier, monospace;
+}
+button {
+  appearance: none;
+  padding-inline: 24px;
+  padding-block: 8px;
+  min-width: 80px;
+  border: 2px solid transparent;
+  outline: none;
+  font-size: 16px;
+  background-color: dodgerblue;
+}
+
+button:focus,
+button:active {
+  border-color: currentColor;
+}

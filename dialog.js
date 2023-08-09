@@ -14,6 +14,11 @@ class PFModal extends HTMLElement {
       this.setAttribute('visible', '');
     } else {
       this.removeAttribute('visible');
+      // let's focus back on the passed in triggerring element
+      // focus on the triggering element is an id is passed.
+      document
+        .getElementById(this.getAttribute('trigger'))
+        ?.focus({ focusVisible: true });
     }
   }
 
@@ -79,7 +84,7 @@ class PFModal extends HTMLElement {
     const closeBtn = this.shadowRoot.getElementById('close-btn');
 
     closeBtn.addEventListener('click', () => {
-      this.removeAttribute('visible');
+      this._handleModalClose();
     });
 
     // 1. handle backdrop click -------------
@@ -94,7 +99,7 @@ class PFModal extends HTMLElement {
       }
 
       // Else, close the modal
-      this.removeAttribute('visible');
+      this._handleModalClose();
     });
 
     // This hack was required as slot element is physically placed outside
@@ -112,7 +117,7 @@ class PFModal extends HTMLElement {
   _handleEscKeypress(event) {
     if (this.visible && event.key === 'Escape') {
       event.preventDefault();
-      this.removeAttribute('visible');
+      this._handleModalClose();
     }
   }
 
@@ -151,6 +156,15 @@ class PFModal extends HTMLElement {
         lastItem.focus();
       }
     }
+  }
+
+  _handleModalClose() {
+    this.removeAttribute('visible');
+
+    // focus on the triggering element is an id is passed.
+    document
+      .getElementById(this.getAttribute('trigger'))
+      ?.focus({ focusVisible: true });
   }
 
   _render() {
