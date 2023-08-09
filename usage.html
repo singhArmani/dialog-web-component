@@ -10,11 +10,54 @@
     <h2>Creating a Modal using Web Component</h2>
     <button id="modal-trigger">Open modal</button>
     <pf-modal title="PF modal title">
-      <p>This is modal content</p>
+      <div>
+        <h3 id="steps">Steps to implement a web component</h3>
+        <ol aria-labelledby="steps">
+          <li>
+            Create a class in which you specify your web component
+            functionality, using the class syntax.
+          </li>
+          <li>
+            Register your new custom element using the
+            CustomElementRegistry.define() method, passing it the element name
+            to be defined, the class or function in which its functionality is
+            specified, and optionally, what element it inherits from.
+          </li>
+          <li>
+            If required, attach a shadow DOM to the custom element using
+            Element.attachShadow() method. Add child elements, event listeners,
+            etc., to the shadow DOM using regular DOM methods. If required,
+            define an HTML template using
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template"
+              >template</a
+            >
+            and
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/slot"
+              >slot</a
+            >. Again use regular DOM methods to clone the template and attach it
+            to your shadow DOM.
+          </li>
+          <li>
+            Use your custom element wherever you like on your page, just like
+            you would any regular HTML element.
+          </li>
+        </ol>
+        <hr />
+        <div class="modal-footer">
+          <a
+            href="https://developer.mozilla.org/en-US/docs/Web/API/Web_components"
+            >Learn Web Components</a
+          >
+          <button>close</button>
+        </div>
+      </div>
     </pf-modal>
   </body>
   <script>
     document.getElementById('modal-trigger').addEventListener('click', (e) => {
+      console.log('trigger');
       document.querySelector('pf-modal').visible = true;
     });
   </script>

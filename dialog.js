@@ -3,6 +3,8 @@ class PFModal extends HTMLElement {
     super();
   }
 
+  static allFocusItems;
+
   get visible() {
     return this.hasAttribute('visible');
   }
@@ -24,10 +26,26 @@ class PFModal extends HTMLElement {
   }
 
   get focusableItems() {
-    return this.shadowRoot.querySelector('[role="dialog"]').querySelectorAll(
-      `button, [href], input, select, textarea, 
-      [tabindex]:not([tabindex="-1"]), video`,
-    );
+    // Just to avoid re-calculating the
+    if (!PFModal.allFocusItems) {
+      console.log('running first time only');
+      const focusSelector = `button, [href], input, select, textarea, 
+      [tabindex]:not([tabindex="-1"]), video`;
+
+      const parentSlotElement = this.shadowRoot
+        .querySelector('#content-slot')
+        .assignedElements()[0];
+
+      const slotFocusableItems =
+        parentSlotElement.querySelectorAll(focusSelector);
+
+      PFModal.allFocusItems = [
+        ...this.shadowRoot.querySelectorAll(focusSelector),
+        ...slotFocusableItems,
+      ];
+      return PFModal.allFocusItems;
+    }
+    return PFModal.allFocusItems;
   }
 
   connectedCallback() {
@@ -68,18 +86,25 @@ class PFModal extends HTMLElement {
     const dialog = this.shadowRoot.querySelector('[role="dialog"]');
     const overlay = this.shadowRoot.querySelector('.overlay');
 
+    // handle backdrop click
     overlay.addEventListener('click', (e) => {
       if (dialog.contains(e.target)) {
         // click was within the modal
         return;
       }
+
       // Else, close the modal
       this.removeAttribute('visible');
     });
 
+    // This hack was required as slot element is physically placed outside
+    // and clicking on this element was accidently closing the modal
+    dialog.querySelector('slot').onclick = (e) => {
+      e.stopPropagation();
+    };
+
     overlay.addEventListener('keydown', this._handleEscKeypress.bind(this));
 
-    console.log('attching window');
     window.addEventListener('keydown', this._handleFocusTrap.bind(this));
   }
 
@@ -113,7 +138,7 @@ class PFModal extends HTMLElement {
 
       // If focused on last item
       // then focus on first item when tab is pressed
-      if (!shiftKey && this.shadowRoot.activeElement === lastItem) {
+      if (!shiftKey && document.activeElement === lastItem) {
         event.preventDefault();
         firstItem.focus();
         return;
@@ -121,7 +146,7 @@ class PFModal extends HTMLElement {
 
       // If focused on first item
       // then focus on last item when shift + tab is pressed
-      if (shiftKey && this.shadowRoot.activeElement === firstItem) {
+      if (shiftKey && document.activeElement === firstItem) {
         event.preventDefault();
         lastItem.focus();
       }
@@ -220,7 +245,7 @@ class PFModal extends HTMLElement {
             </button>
           </div>
           <div class='content'>
-            <slot></slot>
+            <slot id="content-slot"></slot>
           </div>
         </div>`;
 
