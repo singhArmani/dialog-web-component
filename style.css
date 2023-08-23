@@ -18,3 +18,7 @@ button:focus,
 button:active {
   border-color: currentColor;
 }
+
+h2 {
+  color: tomato;
+}

@@ -30,26 +30,30 @@ class PFModal extends HTMLElement {
     this.setAttribute('title', value);
   }
 
+  get id() {
+    return this.getAttribute('id');
+  }
+
+  set id(value) {
+    this.setAttribute('id', value);
+  }
+
   get focusableItems() {
-    // Just to avoid re-calculating the
-    if (!PFModal.allFocusItems) {
-      console.log('running first time only');
-      const focusSelector = `button, [href], input, select, textarea, 
+    // Just to avoid re-calculating the focusable items inside the modal
+    const focusSelector = `button, [href], input, select, textarea, 
       [tabindex]:not([tabindex="-1"]), video`;
 
-      const parentSlotElement = this.shadowRoot
-        .querySelector('#content-slot')
-        .assignedElements()[0];
+    const parentSlotElement = this.shadowRoot
+      .querySelector('#content-slot')
+      .assignedElements()[0];
 
-      const slotFocusableItems =
-        parentSlotElement.querySelectorAll(focusSelector);
+    const slotFocusableItems =
+      parentSlotElement.querySelectorAll(focusSelector);
 
-      PFModal.allFocusItems = [
-        ...this.shadowRoot.querySelectorAll(focusSelector),
-        ...slotFocusableItems,
-      ];
-      return PFModal.allFocusItems;
-    }
+    PFModal.allFocusItems = [
+      ...this.shadowRoot.querySelectorAll(focusSelector),
+      ...slotFocusableItems,
+    ];
     return PFModal.allFocusItems;
   }
 

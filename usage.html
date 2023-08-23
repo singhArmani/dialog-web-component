@@ -54,6 +54,30 @@
         </div>
       </div>
     </pf-modal>
+    <button id="trigger-2">Open modal 2</button>
+    <button id="engage-trigger">Integrate with Engage</button>
+    <pf-modal title="Another modal" trigger="trigger-2" id="another-modal">
+      <div>
+        <div>Hello another modal</div>
+        <button>Log in</button>
+        <button>Sign up</button>
+      </div>
+    </pf-modal>
+
+    <pf-modal
+      title="Integrate with Realbase Engage"
+      trigger="engage-trigger"
+      id="engage-modal"
+    >
+      <div>
+        <div>
+          Now, you can integrate your PF account with Realbase engage to quickly
+          create some proposals.
+        </div>
+        <button>Get Started</button>
+        <button>Create Proposal</button>
+      </div>
+    </pf-modal>
   </body>
   <script>
     document.getElementById('modal-trigger').addEventListener('click', (e) => {
@@ -64,6 +88,15 @@
     // closing the pf-modal is about setting its visible attribute to false
     document.getElementById('close-pf-modal').addEventListener('click', (e) => {
       document.querySelector('pf-modal').visible = false;
+    });
+
+    // another modal
+    document.getElementById('trigger-2').addEventListener('click', (e) => {
+      document.getElementById('another-modal').visible = true;
+    });
+
+    document.getElementById('engage-trigger').addEventListener('click', (e) => {
+      document.getElementById('engage-modal').visible = true;
     });
   </script>
 </html>
