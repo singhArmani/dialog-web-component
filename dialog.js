@@ -3,8 +3,172 @@ class PFModal extends HTMLElement {
     super();
   }
 
+  static allFocusItems;
+
+  get visible() {
+    return this.hasAttribute('visible');
+  }
+
+  set visible(value) {
+    if (value) {
+      this.setAttribute('visible', '');
+    } else {
+      this.removeAttribute('visible');
+      // let's focus back on the passed in triggerring element
+      // focus on the triggering element is an id is passed.
+      document
+        .getElementById(this.getAttribute('trigger'))
+        ?.focus({ focusVisible: true });
+    }
+  }
+
+  get title() {
+    return this.getAttribute('title');
+  }
+
+  set title(value) {
+    this.setAttribute('title', value);
+  }
+
+  get id() {
+    return this.getAttribute('id');
+  }
+
+  set id(value) {
+    this.setAttribute('id', value);
+  }
+
+  get focusableItems() {
+    // Just to avoid re-calculating the focusable items inside the modal
+    const focusSelector = `button, [href], input, select, textarea, 
+      [tabindex]:not([tabindex="-1"]), video`;
+
+    const parentSlotElement = this.shadowRoot
+      .querySelector('#content-slot')
+      .assignedElements()[0];
+
+    const slotFocusableItems =
+      parentSlotElement.querySelectorAll(focusSelector);
+
+    PFModal.allFocusItems = [
+      ...this.shadowRoot.querySelectorAll(focusSelector),
+      ...slotFocusableItems,
+    ];
+    return PFModal.allFocusItems;
+  }
+
   connectedCallback() {
     this._render();
+    this._attachEventHandlers();
+  }
+
+  static get observedAttributes() {
+    return ['visible', 'title'];
+  }
+
+  attributeChangedCallback(name, _, newValue) {
+    if (name === 'title' && this.shadowRoot) {
+      this.shadowRoot.querySelector('.title').textContent = newValue;
+    }
+    if (name === 'visible' && this.shadowRoot) {
+      if (newValue === null) {
+        this.shadowRoot.querySelector('.overlay').classList.remove('visible');
+      } else {
+        this.shadowRoot.querySelector('.overlay').classList.add('visible');
+        // we should focus on the close button here when modal opens
+        this.shadowRoot
+          .getElementById('close-btn')
+          .focus({ focusVisible: true });
+      }
+    }
+  }
+
+  _attachEventHandlers() {
+    // 1.  Close button modal -----------------
+    const closeBtn = this.shadowRoot.getElementById('close-btn');
+
+    closeBtn.addEventListener('click', () => {
+      this._handleModalClose();
+    });
+
+    // 1. handle backdrop click -------------
+    const dialog = this.shadowRoot.querySelector('[role="dialog"]');
+    const overlay = this.shadowRoot.querySelector('.overlay');
+
+    // handle backdrop click
+    overlay.addEventListener('click', (e) => {
+      if (dialog.contains(e.target)) {
+        // click was within the modal
+        return;
+      }
+
+      // Else, close the modal
+      this._handleModalClose();
+    });
+
+    // This hack was required as slot element is physically placed outside
+    // and clicking on this element was accidently closing the modal
+    dialog.querySelector('slot').onclick = (e) => {
+      e.stopPropagation();
+    };
+
+    overlay.addEventListener('keydown', this._handleEscKeypress.bind(this));
+
+    window.addEventListener('keydown', this._handleFocusTrap.bind(this));
+  }
+
+  // 3. Handle 'Esc' keypress -------------
+  _handleEscKeypress(event) {
+    if (this.visible && event.key === 'Escape') {
+      event.preventDefault();
+      this._handleModalClose();
+    }
+  }
+
+  // 4. focus trap handler
+  _handleFocusTrap(event) {
+    if (!this.focusableItems) {
+      return;
+    }
+    const { keyCode, shiftKey } = event;
+    const {
+      length,
+      0: firstItem,
+      [length - 1]: lastItem,
+    } = this.focusableItems;
+
+    // key code for `TAB` is 9
+    if (keyCode === 9) {
+      // If only one item then prevent tabbing
+      if (length === 1) {
+        event.preventDefault();
+        return;
+      }
+
+      // If focused on last item
+      // then focus on first item when tab is pressed
+      if (!shiftKey && document.activeElement === lastItem) {
+        event.preventDefault();
+        firstItem.focus();
+        return;
+      }
+
+      // If focused on first item
+      // then focus on last item when shift + tab is pressed
+      if (shiftKey && document.activeElement === firstItem) {
+        event.preventDefault();
+        lastItem.focus();
+      }
+    }
+  }
+
+  _handleModalClose() {
+    this.removeAttribute('visible');
+
+    // focus on the triggering element is an id is passed.
+    document
+      .getElementById(this.getAttribute('trigger'))
+      ?.focus({ focusVisible: true });
   }
 
   _render() {
@@ -100,7 +264,7 @@ class PFModal extends HTMLElement {
             </button>
           </div>
           <div class='content'>
-            <p>Modal content goes here.</p>
+            <slot id="content-slot"></slot>
           </div>
         </div>`;
 
