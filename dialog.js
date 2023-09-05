@@ -172,12 +172,11 @@ class PFModal extends HTMLElement {
   }
 
   _render() {
-    const shadowRoot = this.attachShadow({ mode: 'open' }); // returns and set `this.shadowRoot`
+    const shadowRoot = this.attachShadow({ mode: 'open' });
 
     // overlay-------
     const overlay = document.createElement('div');
-
-    const overlayClass = 'overlay visible';
+    const overlayClass = this.visible ? 'overlay visible' : 'overlay';
     overlay.setAttribute('class', overlayClass);
 
     overlay.innerHTML = `
@@ -257,7 +256,7 @@ class PFModal extends HTMLElement {
         </style>
         <div class='content-wrapper' role='dialog' aria-modal='true'>
           <div class='modal-head'>
-            <h2 class='title'>Modal title goes here</h2>
+            <h2 class='title'>${this.title}</h2>
             <button id='close-btn' class='close-btn'  aria-labelledby='close-btn-label'>
                 <span id='close-btn-label' hidden>Close modal</span>
                 <img src="./close-icon.svg" alt=''/>
